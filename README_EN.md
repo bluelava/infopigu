@@ -59,13 +59,27 @@ Typical use cases:
 
 ## Installation
 
-### 1. Install dependencies
+Two installation paths are supported:
+
+- Method 1: download the source code, build locally, then load it into Chrome / Edge
+- Method 2: download the prebuilt extension `.zip`, extract it, then load it into Chrome
+
+### Method 1: Build from source and install locally
+
+#### Step 1. Get the source code
+
+```bash
+git clone https://github.com/bluelava/infopigu.git
+cd infopigu
+```
+
+#### Step 2. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 2. Build the extension
+#### Step 3. Build the extension
 
 ```bash
 pnpm build
@@ -73,17 +87,68 @@ pnpm build
 
 Build outputs:
 
-- unpacked Chrome extension directory: `dist/`
+- unpacked extension directory: `dist/`
 - release artifact: `release/cognitive-delta-extension.zip`
 
-### 3. Load it in Chrome
+#### Step 4. Install it in Chrome
 
 1. Open `chrome://extensions/`
 2. Enable `Developer mode`
 3. Click `Load unpacked`
 4. Select the `dist/` directory in this repository
 
-### 4. First-time setup
+#### Step 5. Install it in Edge
+
+1. Open `edge://extensions/`
+2. Enable `Developer mode`
+3. Click `Load unpacked`
+4. Select the `dist/` directory in this repository
+
+### Method 2: Download the prebuilt ZIP and install it
+
+Note: Chrome and Edge cannot install a `.zip` extension package directly. The correct flow is: download the zip, extract it, then load the extracted directory as an unpacked extension.
+
+#### Step 1. Download the prebuilt ZIP
+
+Download the compiled package:
+
+- `release/cognitive-delta-extension.zip`
+
+If you are downloading it from a GitHub Release or a shared artifact, the process is the same.
+
+#### Step 2. Extract the ZIP
+
+On macOS / Linux:
+
+```bash
+unzip cognitive-delta-extension.zip -d /tmp/cognitive-delta-extension
+```
+
+On Windows, you can simply extract it with File Explorer.
+
+After extraction, the target directory should contain files such as:
+
+- `manifest.json`
+- `assets/`
+- `index.html`
+- `options.html`
+- `sidepanel.html`
+
+#### Step 3. Install the extracted extension in Chrome
+
+1. Open `chrome://extensions/`
+2. Enable `Developer mode`
+3. Click `Load unpacked`
+4. Select the extracted directory, for example `/tmp/cognitive-delta-extension`
+
+#### Step 4. Install the extracted extension in Edge
+
+1. Open `edge://extensions/`
+2. Enable `Developer mode`
+3. Click `Load unpacked`
+4. Select the extracted directory
+
+### First-time setup
 
 Open the extension `Options` page and configure:
 

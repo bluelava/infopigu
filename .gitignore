@@ -6,3 +6,11 @@ playwright-report
 test-results
 .pnpm-store
 tsconfig.tsbuildinfo
+
+# Allow image assets in this repo even if they are ignored globally.
+!*.png
+!*.jpg
+!*.jpeg
+!*.gif
+!*.webp
+!*.svg
