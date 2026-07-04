@@ -8,9 +8,9 @@ Usage:
 
 Options:
   --target <dir>        Local checkout path of the GitHub mirror repo.
-                        Default: ../infopigu-github-sync
+                        Default: /private/tmp/infopigu-github-sync
   --remote <url>        GitHub remote URL used when cloning the target repo.
-                        Default: git@github.com:bluelava/infopigu.git
+                        Default: https://github.com/bluelava/infopigu.git
   --branch <name>       Target branch. Default: main
   --message <text>      Commit message. Default: sync: import from InformaticBiguCodex <timestamp>
   --skip-build          Skip pnpm build and release packaging.
@@ -30,8 +30,8 @@ EOF
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-TARGET_DIR="${GITHUB_SYNC_TARGET_DIR:-${SOURCE_ROOT}/../infopigu-github-sync}"
-REMOTE_URL="${GITHUB_SYNC_REMOTE_URL:-git@github.com:bluelava/infopigu.git}"
+TARGET_DIR="${GITHUB_SYNC_TARGET_DIR:-/private/tmp/infopigu-github-sync}"
+REMOTE_URL="${GITHUB_SYNC_REMOTE_URL:-https://github.com/bluelava/infopigu.git}"
 BRANCH="${GITHUB_SYNC_BRANCH:-main}"
 COMMIT_MESSAGE="${GITHUB_SYNC_COMMIT_MESSAGE:-sync: import from InformaticBiguCodex $(date '+%Y-%m-%d %H:%M:%S')}"
 SKIP_BUILD=0
