@@ -1,4 +1,4 @@
-# Cognitive Delta
+# InfoPigu (Cognitive Delta)
 
 [中文](./README.md) | [English](./README_EN.md)
 
@@ -6,15 +6,22 @@ A Chrome extension for high-volume reading workflows. While you browse articles 
 
 ## Overview
 
-In an information-saturated environment, the scarce resource is not content. It is net new information.
+A useful metaphor behind this project comes from the Daoist idea of `bigu`, often associated with reducing unnecessary intake so the body can return to a cleaner, more focused state.
 
-Cognitive Delta is not designed as a bookmark manager or a generic summarizer. It focuses on information delta:
+InfoPigu applies that metaphor to information environments. In an information-saturated world, the scarce resource is not more content. It is clean, useful, genuinely new information.
 
-- Detect the actual article body on the current page
-- Ignore video overlays, UI chrome, platform noise, and non-body text
-- Extract claims from the body content
-- Compare them against your local reading history
-- Tell you what is repetitive, what is new, and whether the page is worth deeper reading
+That is why this project is not designed as a bookmark manager or a generic summarizer. Its core can be described in three traits:
+
+- Extraction: focus on the actual body content and ignore video overlays, UI chrome, author metadata, timestamps, and platform noise
+- Deduplication: compare the current page against your local reading memory and detect what you have effectively already read
+- Privacy-first: keep reading records and the knowledge base local by default, activate only on whitelisted domains, and let the user control any cloud provider configuration
+
+Built on those ideas, Cognitive Delta / InfoPigu will:
+
+- detect the actual article body on the current page
+- extract claims from the body content
+- compare them against your local reading history
+- tell you what is repetitive, what is new, and whether the page is worth deeper reading
 
 Typical use cases:
 
@@ -28,6 +35,7 @@ Typical use cases:
 - Supports both feed mode and single-article mode
 - Automatic or manual duplicate analysis
 - Novel claim extraction focused on body content rather than metadata noise
+- Local-first storage and whitelist-based activation
 - Side Panel with duplicate sources, similar content, and novel claims
 - New Claims Popup for fast in-page feedback
 - Local KDB (Knowledge Database) for persistent reading memory
