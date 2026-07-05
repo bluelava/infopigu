@@ -28,7 +28,7 @@ function splitLongTextIntoSegments(text: string, section?: string): readonly Seg
   }
 
   const sentences = text
-    .split(/(?<=[。！？!?])/u)
+    .split(/(?<=[。！？!?；;])|(?<=[.?!;])\s+/u)
     .map((sentence) => sentence.trim())
     .filter((sentence) => sentence.length > 0)
 

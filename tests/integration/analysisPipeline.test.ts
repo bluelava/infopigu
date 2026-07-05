@@ -394,7 +394,7 @@ describe("analysis pipeline", () => {
         similarity: 1,
         snippet:
           "Clawhunt 是一个 2026 年 AI 赏金平台，用户可以发布任务并让 AI Agent 自动接单完成。",
-        url: "https://weibo.com/7465322154/R4gARAu6M?refer_flag=1001030103_"
+        url: "https://weibo.com/7465322154/R4gARAu6M"
       }
     ])
     expect(result.similarSources[0]?.snippet).not.toBe("2x")
@@ -719,6 +719,81 @@ describe("analysis pipeline", () => {
     expect(result.claims[0]?.text).toBe(bodyText)
     expect(result.novelClaims).toEqual([bodyText])
     expect(embeddingProvider.calls).toEqual([[bodyText]])
+    await database.delete()
+  })
+
+  it("keeps long-document analysis running when one subsection fails claim extraction", async () => {
+    const database = createCognitiveDeltaDb(`analysis-long-partial-${crypto.randomUUID()}`)
+    const embeddingProvider = new RoutedEmbeddingProvider(
+      {
+        "Long-form claim A": [1, 0],
+        "Long-form claim B": [0, 1]
+      },
+      "text-embedding-3-small",
+      1536
+    )
+    const pipeline = createAnalysisPipeline({
+      claimProvider: {
+        async extractClaims(input) {
+          if (input.chunks.length > 2) {
+            throw new Error("payload too large")
+          }
+
+          return input.chunks.flatMap((chunk, index) => {
+            if (chunk.text.includes("FAIL_SECTION")) {
+              throw new Error("subsection extraction failed")
+            }
+
+            return [
+              {
+                chunkId: chunk.chunkId,
+                text: index % 2 === 0 ? "Long-form claim A" : "Long-form claim B",
+                type: "fact",
+                importance: 0.8,
+                confidence: 0.9,
+                entities: []
+              }
+            ]
+          })
+        }
+      },
+      chunksRepository: createChunksRepository(database),
+      claimsRepository: createClaimsRepository(database),
+      documentsRepository: createDocumentsRepository(database),
+      embeddingsRepository: createEmbeddingsRepository(database),
+      embeddingProvider,
+      resultsRepository: createResultsRepository(database)
+    })
+
+    const longParagraph =
+      "This long-form article explains product roadmap details, release sequencing, adoption constraints, and evaluation evidence in a way that requires chunked claim extraction. "
+
+    const result = await pipeline.analyzeDocument({
+      document: buildDocumentVariant({
+        docId: createDocumentId("doc_long_partial"),
+        url: "https://mp.weixin.qq.com/s/long-article",
+        canonicalUrl: "https://mp.weixin.qq.com/s/long-article",
+        domain: "mp.weixin.qq.com",
+        title: "Long WeChat Article",
+        extractor: "wechat",
+        blocks: [
+          { type: "paragraph", text: longParagraph.repeat(8) },
+          { type: "paragraph", text: `${longParagraph.repeat(8)} FAIL_SECTION ${longParagraph.repeat(4)}` },
+          { type: "paragraph", text: longParagraph.repeat(8) }
+        ]
+      }),
+      claimModel: "gpt-4.1-mini",
+      claimProviderName: "openai",
+      currentDocumentCount: 0,
+      embeddingModel: "text-embedding-3-small",
+      embeddingProviderName: "openai",
+      maxDocuments: 1000
+    })
+
+    expect(result.judgement).toBe("complete")
+    expect(result.claims.length).toBeGreaterThanOrEqual(2)
+    expect(result.novelClaims).toEqual(["Long-form claim A", "Long-form claim B"])
+    expect(embeddingProvider.calls).toEqual([["Long-form claim A"], ["Long-form claim B"]])
     await database.delete()
   })
 })

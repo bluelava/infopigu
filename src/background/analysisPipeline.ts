@@ -1,5 +1,6 @@
 import type { ClaimProvider, EmbeddingProvider } from "../ai/types"
 import { buildClaimEmbeddings, collectSimilarSources } from "./analysisEmbeddingStage"
+import { extractClaimsWithFallback } from "./claimExtractionOrchestrator"
 import { canPersistMoreDocuments } from "../core/capacity"
 import { createChunksFromDocument } from "../core/chunker"
 import { hashContentParts } from "../core/hashing"
@@ -33,7 +34,8 @@ interface AnalysisPipelineDependencies {
   readonly documentsRepository: ReturnType<typeof createDocumentsRepository>
   readonly embeddingsRepository: ReturnType<typeof createEmbeddingsRepository>
   readonly embeddingProvider: EmbeddingProvider
-  readonly onEmbeddingTaskProgress?: (input: {
+  readonly onAnalysisStageProgress?: (input: {
+    readonly stage: "claiming" | "embedding"
     readonly completedTasks: number
     readonly pendingTasks: number
     readonly totalTasks: number
@@ -130,15 +132,27 @@ export function createAnalysisPipeline(dependencies: AnalysisPipelineDependencie
         title: input.document.title,
         chunkCount: chunks.length
       })
-      const extractedClaims = await dependencies.claimProvider.extractClaims({
-        docId: persistedDocument.docId,
+      const claimExtractionResult = await extractClaimsWithFallback({
+        claimProvider: dependencies.claimProvider,
         chunks,
+        docId: persistedDocument.docId,
         model: input.claimModel,
-        provider: input.claimProviderName
+        provider: input.claimProviderName,
+        onProgress: async (progress) => {
+          await dependencies.onAnalysisStageProgress?.({
+            stage: "claiming",
+            completedTasks: progress.completedBatches,
+            pendingTasks: progress.pendingBatches,
+            totalTasks: progress.totalBatches
+          })
+        }
       })
+      const extractedClaims = claimExtractionResult.claims
       debugLog("background", "claims extracted", {
         title: input.document.title,
-        claimCount: extractedClaims.length
+        claimCount: extractedClaims.length,
+        failedChunkCount: claimExtractionResult.failedChunkIds.length,
+        totalClaimBatches: claimExtractionResult.totalBatches
       })
       const claims = extractedClaims.map<ClaimRecord>((claim, index) => ({
         claimId: createClaimId(`${persistedDocument.docId}_claim_${index + 1}`),
@@ -268,7 +282,8 @@ export function createAnalysisPipeline(dependencies: AnalysisPipelineDependencie
               pendingTasks,
               totalTasks
             })
-            void dependencies.onEmbeddingTaskProgress?.({
+            void dependencies.onAnalysisStageProgress?.({
+              stage: "embedding",
               completedTasks,
               pendingTasks,
               totalTasks

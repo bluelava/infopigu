@@ -84,7 +84,7 @@ const analysisJobQueue = createAnalysisJobQueue({
       async (progress) => {
         await updateJob({
           ...job,
-          stage: "embedding",
+          stage: progress.stage,
           completedTasks: progress.completedTasks,
           pendingTasks: progress.pendingTasks,
           totalTasks: progress.totalTasks

@@ -148,7 +148,8 @@ export function createApiRouter(database: CognitiveDeltaDb) {
   return {
     async analyzeDocument(
       document: ExtractedDocument,
-      onEmbeddingTaskProgress?: (input: {
+      onAnalysisStageProgress?: (input: {
+        readonly stage: "claiming" | "embedding"
         readonly completedTasks: number
         readonly pendingTasks: number
         readonly totalTasks: number
@@ -197,7 +198,7 @@ export function createApiRouter(database: CognitiveDeltaDb) {
         documentsRepository,
         embeddingsRepository,
         embeddingProvider: embeddingProviders.embeddingProvider,
-        ...(onEmbeddingTaskProgress === undefined ? {} : { onEmbeddingTaskProgress }),
+        ...(onAnalysisStageProgress === undefined ? {} : { onAnalysisStageProgress }),
         resultsRepository
       })
 
