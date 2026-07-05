@@ -5,6 +5,7 @@ const englishMessages = {
   "navigation.options": "Options",
   "navigation.about": "About",
   "navigation.vizKdb": "Viz-KDB",
+  "navigation.cloudVersion": "Cloud Edition",
   "options.hero.title": "Repetitive Reading Assistant",
   "options.hero.description":
     "Analysis runs automatically. After a page or feed item stays visible long enough, the extension extracts claims, compares them with your local knowledge base, and recommends how deeply to read.",
@@ -254,6 +255,7 @@ export const messages: Readonly<Record<SupportedLocale, MessageCatalog>> = {
     "navigation.options": "设置",
     "navigation.about": "关于",
     "navigation.vizKdb": "Viz-KDB",
+    "navigation.cloudVersion": "云端版",
     "options.hero.title": "重复信息阅读助手",
     "options.hero.description":
       "系统默认自动分析。页面或信息流内容停留达到阈值后，会提取 claim、与本地知识库做语义比对，并给出阅读建议。",
@@ -491,6 +493,7 @@ export const messages: Readonly<Record<SupportedLocale, MessageCatalog>> = {
     "navigation.options": "設定",
     "navigation.about": "關於",
     "navigation.vizKdb": "Viz-KDB",
+    "navigation.cloudVersion": "雲端版",
     "options.hero.title": "重複資訊閱讀助手",
     "options.hero.description":
       "系統預設自動分析。頁面或資訊流內容停留達到閾值後，會提取 claim、與本地知識庫做語義比對，並給出閱讀建議。",

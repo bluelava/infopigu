@@ -13,7 +13,7 @@ import { applyDocumentTheme } from "../theme/themeMode"
 const database = createCognitiveDeltaDb()
 
 export function Popup(): JSX.Element {
-  const { t } = useI18n()
+  const { locale, t } = useI18n()
   const [domains, setDomains] = useState<readonly string[]>([])
   const [savedDocuments, setSavedDocuments] = useState(0)
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
@@ -21,6 +21,10 @@ export function Popup(): JSX.Element {
     settings.singleArticleReadMode === "auto" ? t("popup.mode.auto") : t("popup.mode.manual")
   const feedModeLabel =
     settings.feedItemReadMode === "auto" ? t("popup.mode.auto") : t("popup.mode.manual")
+  const cloudVersionUrl =
+    locale === "en"
+      ? "https://github.com/bluelava/infopigu/blob/main/CLOUD_VERSION_EN.md"
+      : "https://github.com/bluelava/infopigu/blob/main/CLOUD_VERSION.md"
 
   useEffect(() => {
     const whitelistRepository = createWhitelistRepository(database)
@@ -73,6 +77,15 @@ export function Popup(): JSX.Element {
             type="button"
           >
             {t("navigation.vizKdb")}
+          </button>
+          <button
+            className="toolbar-button popup-toolbar-button"
+            onClick={() => {
+              void browser.tabs.create({ url: cloudVersionUrl })
+            }}
+            type="button"
+          >
+            {t("navigation.cloudVersion")}
           </button>
         </div>
         <p className="eyebrow popup-eyebrow">{t("common.productName")}</p>
